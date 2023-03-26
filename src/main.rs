@@ -23,6 +23,8 @@ async fn main() -> Result<(), anyhow::Error> {
         .with(formatting_layer);
     set_global_default(subscriber).expect("setting default subscriber failed");
     let args = Args::parse();
+
+    // TODO: Change crate name
     let settings = axum_template::config::get_config(&args.environment)?;
     axum_template::run(settings).await?;
     Ok(())

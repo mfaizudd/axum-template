@@ -45,7 +45,8 @@ pub struct Settings {
 }
 
 pub fn get_config(environment: &str) -> Result<Settings> {
-    let base_path = ProjectDirs::from("net", "faizud", "tasks")
+    // TODO: Change config directory
+    let base_path = ProjectDirs::from("com", "example", "app")
         .and_then(|dirs| {
             let config_dir = dirs.config_dir();
             if config_dir.exists() {
@@ -59,10 +60,12 @@ pub fn get_config(environment: &str) -> Result<Settings> {
     let base_path = Path::new(&base_path);
     let base_file = base_path.join("base.yml");
     let environment_file = base_path.join(format!("{environment}.yml"));
+
+    // TODO: Change environment prefix
     let settings = Config::builder()
         .add_source(File::from(base_file))
         .add_source(File::from(environment_file).required(false))
-        .add_source(Environment::with_prefix("TASKS").separator("_"))
+        .add_source(Environment::with_prefix("APP").separator("_"))
         .build()?
         .try_deserialize::<Settings>()?;
     Ok(settings)
