@@ -1,5 +1,5 @@
 [package]
-name = "axum-template"
+name = "axum-template" # TODO: Change crate name
 version = "0.1.0"
 edition = "2021"
 

@@ -20,7 +20,7 @@ services:
       - psql:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: tasks
+      POSTGRES_DB: app # TODO: Change database name
     healthcheck:
       test: pg_isready -U postgres
       interval: 3s

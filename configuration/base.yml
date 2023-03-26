@@ -12,7 +12,7 @@ database:
   password: postgres
   host: localhost
   port: 5432
-  database: tasks
+  database: app # TODO: Change database name
 redis:
   host: 127.0.0.1
   port: 6379
