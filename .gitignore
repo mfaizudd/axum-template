@@ -1,0 +1,6 @@
+/target
+/configuration/local.yml
+
+# Docker-specific configuration for local development
+/docker_config
+.env

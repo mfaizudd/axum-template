@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  tasks:
+    build: .
+    ports:
+      - 8000:8000
+    volumes:
+      - ./docker_config:/configuration
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+        - .env
+    environment:
+      ENVIRONMENT: local # will be used to load /configuration/{environment}.yml
+  tasks-web:
+    build:
+      context: ./web
+    ports:
+      - 3000:3000
+    env_file:
+      - ./web/.env.local
+  db:
+    image: postgres:15
+    volumes:
+      - psql:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tasks
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 3s
+      timeout: 10s
+      retries: 10
+  redis:
+    image: redis
+    volumes:
+      - redis:/data
+    command: redis-server --save 60 1 --loglevel warning
+
+volumes:
+  redis:
+  psql:
+  config:
