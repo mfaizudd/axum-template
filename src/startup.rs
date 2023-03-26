@@ -48,7 +48,6 @@ pub async fn run(settings: Settings) -> Result<(), anyhow::Error> {
         .layer(cors_layer)
         .with_state(Arc::new(state));
 
-    println!("Listening on http://{address}");
     tracing::info!("Listening on http://{address}");
     axum::Server::bind(&address)
         .serve(app.into_make_service())

@@ -1,5 +1,5 @@
 FROM rust AS chef
-WORKDIR /tasks
+WORKDIR /app
 ENV CARGO_NET_GIT_FETCH_WITH_CLI=true
 RUN cargo install cargo-chef
 
@@ -8,7 +8,7 @@ COPY . .
 RUN cargo chef prepare --recipe-path recipe.json
 
 FROM chef as builder
-COPY --from=planner /tasks/recipe.json recipe.json
+COPY --from=planner /app/recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 COPY . .
 RUN cargo build --release
@@ -21,8 +21,9 @@ RUN apt-get update -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /tasks/target/release/tasks /usr/local/bin/tasks
+# TODO: Change app name
+COPY --from=builder /app/target/release/axum-template /usr/local/bin/axum-template
 COPY ./migrations ./migrations
 COPY ./configuration ./configuration
-VOLUME /tasks/configuration
-CMD ["tasks"]
+VOLUME /app/configuration
+CMD ["app"]
