@@ -13,21 +13,34 @@ pub struct Response<T: Serialize> {
 }
 
 impl<T: Serialize> Response<T> {
-    pub fn new(data: T, message: String, links: Vec<ResponseLink>) -> Self {
+    pub fn new(data: T) -> Self {
         Self {
             data: Some(data),
             error: None,
-            message,
-            links,
+            message: String::new(),
+            links: vec![],
         }
     }
 
-    pub fn error(error: AppError, message: String, links: Vec<ResponseLink>) -> Self {
+    pub fn message<S: Into<String>>(self, message: S) -> Self {
+        Self {
+            message: message.into(),
+            ..self
+        }
+    }
+
+    pub fn link(self, link: ResponseLink) -> Self {
+        let mut links = self.links;
+        links.push(link);
+        Self { links, ..self }
+    }
+
+    pub fn error(error: AppError) -> Self {
         Self {
             data: None,
             error: Some(error),
-            message,
-            links,
+            message: String::new(),
+            links: vec![],
         }
     }
 
@@ -41,4 +54,14 @@ pub struct ResponseLink {
     pub rel: String,
     pub href: String,
     pub method: String,
+}
+
+impl ResponseLink {
+    pub fn new<S: Into<String>>(rel: S, href: S, method: S) -> Self {
+        Self {
+            rel: rel.into(),
+            href: href.into(),
+            method: method.into(),
+        }
+    }
 }

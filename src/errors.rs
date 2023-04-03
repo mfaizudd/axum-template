@@ -88,7 +88,7 @@ impl IntoResponse for AppError {
         };
 
         tracing::error!("Error: {:?}", self);
-        let body: Response<()> = Response::error(self, "An error has occured".to_string(), vec![]);
+        let body: Response<()> = Response::error(self).message("An error has occurred");
         (status, Json(body)).into_response()
     }
 }
