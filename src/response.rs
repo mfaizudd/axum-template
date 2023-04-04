@@ -4,48 +4,61 @@ use serde::Serialize;
 
 use crate::AppError;
 
+pub struct ResponseBuilder<T: Serialize> {
+    response: Response<T>,
+}
+
 #[derive(Serialize)]
-pub struct Response<T: Serialize> {
+struct Response<T: Serialize> {
     pub data: Option<T>,
     pub error: Option<AppError>,
     pub message: String,
     pub links: Vec<ResponseLink>,
 }
 
-impl<T: Serialize> Response<T> {
+impl<T: Serialize> ResponseBuilder<T> {
     pub fn new(data: T) -> Self {
         Self {
-            data: Some(data),
-            error: None,
-            message: String::new(),
-            links: vec![],
+            response: Response {
+                data: Some(data),
+                error: None,
+                message: String::new(),
+                links: vec![],
+            },
         }
     }
 
     pub fn message<S: Into<String>>(self, message: S) -> Self {
-        Self {
+        let response = Response {
             message: message.into(),
-            ..self
-        }
+            ..self.response
+        };
+        Self { response }
     }
 
     pub fn link(self, link: ResponseLink) -> Self {
-        let mut links = self.links;
+        let mut links = self.response.links;
         links.push(link);
-        Self { links, ..self }
+        let response = Response {
+            links,
+            ..self.response
+        };
+        Self { response }
     }
 
     pub fn error(error: AppError) -> Self {
         Self {
-            data: None,
-            error: Some(error),
-            message: String::new(),
-            links: vec![],
+            response: Response {
+                data: None,
+                error: Some(error),
+                message: String::new(),
+                links: vec![],
+            },
         }
     }
 
-    pub fn json(&self, code: StatusCode) -> impl IntoResponse {
-        (code, Json(self)).into_response()
+    pub fn json(self, code: StatusCode) -> impl IntoResponse {
+        (code, Json(self.response)).into_response()
     }
 }
 

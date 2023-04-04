@@ -1,4 +1,4 @@
-use axum::{response::IntoResponse, Json};
+use axum::response::IntoResponse;
 use derive_more::Display;
 use hyper::StatusCode;
 use jsonwebtoken::errors::ErrorKind;
@@ -6,7 +6,7 @@ use serde::{ser::SerializeStruct, Serialize};
 use thiserror::Error;
 use validator::ValidationError;
 
-use crate::response::Response;
+use crate::response::ResponseBuilder;
 
 #[derive(Serialize, Error, Debug, Display)]
 #[serde(tag = "type", content = "value")]
@@ -88,7 +88,9 @@ impl IntoResponse for AppError {
         };
 
         tracing::error!("Error: {:?}", self);
-        let body: Response<()> = Response::error(self).message("An error has occurred");
-        (status, Json(body)).into_response()
+        ResponseBuilder::<()>::error(self)
+            .message("An error has occurred")
+            .json(status)
+            .into_response()
     }
 }
