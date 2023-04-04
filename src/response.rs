@@ -10,10 +10,10 @@ pub struct ResponseBuilder<T: Serialize> {
 
 #[derive(Serialize)]
 struct Response<T: Serialize> {
-    pub data: Option<T>,
-    pub error: Option<AppError>,
-    pub message: String,
-    pub links: Vec<ResponseLink>,
+    data: Option<T>,
+    error: Option<AppError>,
+    message: String,
+    links: Vec<ResponseLink>,
 }
 
 impl<T: Serialize> ResponseBuilder<T> {
